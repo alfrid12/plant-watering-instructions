@@ -17,7 +17,7 @@ Resources:
   WebServer:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
+      ImageId: "/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2"
       InstanceType: t2.micro
       SecurityGroupIds:
         - !Ref WebServerSecurityGroup
