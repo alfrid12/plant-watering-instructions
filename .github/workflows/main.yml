@@ -1,19 +1,53 @@
 
-name: GitHub Actions Demo
-run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+name: Plant Watering Instructions app GitHub Actions Deploy
 on: [push]
+# jobs:
+#   Explore-GitHub-Actions:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+#       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+#       - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+#       - name: Check out repository code
+#         uses: actions/checkout@v5
+#       - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+#       - run: echo "🖥️ The workflow is now ready to test your code on the runner."
+#       - name: List files in the repository
+#         run: |
+#           ls ${{ github.workspace }}
+#       - run: echo "🍏 This job's status is ${{ job.status }}."
+#       name: Deploy Cluster
+
 jobs:
-  Explore-GitHub-Actions:
+  cloudformation-deploy:
+    name: Deploy stack to AWS
     runs-on: ubuntu-latest
     steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
-      - name: Check out repository code
-        uses: actions/checkout@v5
-      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
-      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
-      - name: List files in the repository
-        run: |
-          ls ${{ github.workspace }}
-      - run: echo "🍏 This job's status is ${{ job.status }}."
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Configure AWS credentials
+      id: creds
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.ACCESS_KEY_SECRET }}
+        aws-region: us-east-1
+
+    - name: Deploy example CloudFormation stack
+      id: pwi-example
+      uses: aws-actions/aws-cloudformation-github-deploy@master
+      with:
+        name: pwi-example
+        template: template.yml
+        no-fail-on-empty-changeset: "1"
+        # parameter-overrides: >-
+        #   AvailabilityZones=${{ github.event.inputs.region }}a,
+        #   AvailabilityZones=${{ github.event.inputs.region }}c,
+        #   KeyPairName=${{ github.event.inputs.keypair }},
+        #   NumberOfAZs=2,
+        #   ProvisionBastionHost=Disabled,
+        #   EKSPublicAccessEndpoint=Enabled,
+        #   EKSPrivateAccessEndpoint=Enabled,
+        #   RemoteAccessCIDR=0.0.0.0/0
+
