@@ -19,6 +19,8 @@ Resources:
     Properties:
       ImageId: ami-08982f1c5bf93d976
       InstanceType: t2.micro
+      IamInstanceProfile:
+        !Ref EC2InstanceProfile
       SecurityGroupIds:
         - !Ref WebServerSecurityGroup
       UserData: !Base64 |
@@ -28,6 +30,43 @@ Resources:
         systemctl start httpd
         systemctl enable httpd
         echo "<html><body><h1>So far so good</h1></body></html>" > /var/www/html/index.html
+
+  
+  EC2IamRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - ec2.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: "/"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
+
+  # EC2RolePolicies:
+  #   Type: AWS::IAM::Policy
+  #   Properties:
+  #     PolicyName: root
+  #     PolicyDocument:
+  #       Version: '2012-10-17'
+  #       Statement:
+  #       - Effect: Allow
+  #         Action: "*"
+  #         Resource: "*"
+  #     Roles:
+  #     - !Ref EC2IamRole
+
+  EC2InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: "/"
+      Roles:
+      - !Ref EC2IamRole
 
 Outputs:
   WebsiteURL:
