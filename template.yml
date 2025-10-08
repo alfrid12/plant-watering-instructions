@@ -1,7 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: CloudFormation Template for WebServer with Security Group and EC2 Instance
-
-
+Description: CloudFormation Template for PWI infrastructure
 
 Resources:
   WebServerSecurityGroup:
@@ -12,7 +10,7 @@ Resources:
         - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
-          CidrIp: 24.22.223.95/32
+          CidrIp: 73.221.182.250/32
 
   WebServer:
     Type: AWS::EC2::Instance
