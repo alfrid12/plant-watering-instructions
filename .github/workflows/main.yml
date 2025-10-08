@@ -34,20 +34,14 @@ jobs:
         aws-secret-access-key: ${{ secrets.ACCESS_KEY_SECRET }}
         aws-region: us-east-1
 
-    - name: Deploy example CloudFormation stack
-      id: pwi-example
+    - name: Deploy PWI CloudFormation stack
+      id: pwi
       uses: aws-actions/aws-cloudformation-github-deploy@master
       with:
-        name: pwi-example
+        name: pwi
         template: template.yml
         no-fail-on-empty-changeset: "1"
         # parameter-overrides: >-
-        #   AvailabilityZones=${{ github.event.inputs.region }}a,
-        #   AvailabilityZones=${{ github.event.inputs.region }}c,
-        #   KeyPairName=${{ github.event.inputs.keypair }},
         #   NumberOfAZs=2,
-        #   ProvisionBastionHost=Disabled,
-        #   EKSPublicAccessEndpoint=Enabled,
-        #   EKSPrivateAccessEndpoint=Enabled,
-        #   RemoteAccessCIDR=0.0.0.0/0
+        #   ProvisionBastionHost=Disabled
 
